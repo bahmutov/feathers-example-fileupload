@@ -11,6 +11,7 @@ const multipartMiddleware = multer();
 const dauria = require('dauria');
 const filesize = require('file-size');
 const mkdir = require('mkdir-p')
+const glob = require('glob')
 
 // feathers-blob service
 const blobService = require('feathers-blob');
@@ -19,7 +20,8 @@ const blobService = require('feathers-blob');
 // but you can use feathers-blob with any other
 // storage service like AWS or Google Drive.
 const fs = require('fs-blob-store');
-const join = require('path').join
+const path = require('path')
+const join = path.join
 const rootFolder = process.env.NOW ? '/tmp' : __dirname
 const topFolder = join(rootFolder, 'uploads')
 const blobStorage = fs(topFolder);
@@ -46,6 +48,28 @@ app.post('/new-folder', function (req, res) {
     }
 
     return res.sendStatus(200)
+})
+
+app.post('/uploaded', function (req, res) {
+    console.log('list of uploaded files in folder %s', req.body.folderId)
+    if (!req.body.folderId) {
+        throw new Error('Missing folder id');
+    }
+    const fullFolder = join(topFolder, req.body.folderId)
+    if (!exists(fullFolder)) {
+        throw new Error('Folder ' + req.body.folderId + ' not found')
+    }
+    console.log('files in folder', fullFolder)
+    glob(`${fullFolder}/*`, function (err, files) {
+        if (err) {
+            throw new Error(err)
+        }
+        const relative = files.map(name => path.relative(topFolder, name))
+        console.log('found %d files', relative.length)
+        console.log(relative)
+        res.send(relative)
+    }, {dir: fullFolder})
+    // return res.sendStatus(200)
 })
 
 // Parse URL-encoded params
