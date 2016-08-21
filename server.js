@@ -62,11 +62,20 @@ app.service('/uploads').before({
     create: [
         function(hook) {
             if (!hook.data.uri && hook.params.file){
-                console.log('decoding file');
                 const file = hook.params.file;
+                console.log('decoding file', file.originalname, file.size);
                 const uri = dauria.getBase64DataURI(file.buffer, file.mimetype);
                 hook.data = {uri: uri};
+                hook.data.id = file.originalname;
             }
+        }
+    ]
+}).after({
+    create: [
+        function (hook) {
+            console.log('after uploading')
+            console.log(hook.data.id)
+            hook.data.uri = undefined
         }
     ]
 });
