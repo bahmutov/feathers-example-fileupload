@@ -48,8 +48,13 @@ app.use('/uploads',
     // another middleware, this time to
     // transfer the received file to feathers
     function(req,res,next){
-        console.log('/uploads');
+        console.log('/uploads', req.body);
+        const folderId = req.body.folderId;
+        if (!folderId) {
+            throw new Error('missing folderId');
+        }
         req.feathers.file = req.file;
+        req.feathers.folderId = req.body.folderId;
         next();
     },
     blobService({Model: blobStorage})
@@ -62,10 +67,15 @@ app.use('/uploads',
 app.service('/uploads').before({
     create: [
         function(hook) {
+            if (!hook.params.folderId) {
+                throw new Error('Missing folderId');
+            }
             if (!hook.data.uri && hook.params.file){
                 const file = hook.params.file;
                 console.log('decoding file', file.originalname,
                     filesize(file.size).human());
+                console.log('params folder id', hook.params.folderId);
+
                 const uri = dauria.getBase64DataURI(file.buffer, file.mimetype);
                 hook.data = {uri: uri};
                 hook.data.id = file.originalname;
