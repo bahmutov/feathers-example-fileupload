@@ -9,6 +9,7 @@ const handler = require('feathers-errors/handler');
 const multer = require('multer');
 const multipartMiddleware = multer();
 const dauria = require('dauria');
+const filesize = require('file-size');
 
 // feathers-blob service
 const blobService = require('feathers-blob');
@@ -63,7 +64,8 @@ app.service('/uploads').before({
         function(hook) {
             if (!hook.data.uri && hook.params.file){
                 const file = hook.params.file;
-                console.log('decoding file', file.originalname, file.size);
+                console.log('decoding file', file.originalname,
+                    filesize(file.size).human());
                 const uri = dauria.getBase64DataURI(file.buffer, file.mimetype);
                 hook.data = {uri: uri};
                 hook.data.id = file.originalname;

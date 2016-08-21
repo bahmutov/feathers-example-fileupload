@@ -29,6 +29,8 @@
             Dropzone.options.myAwesomeDropzone = {
                 paramName: "uri",
                 uploadMultiple: false,
+                maxFilesize: 10,
+                acceptedFiles: 'image/jpeg,image/jpg',
                 init: function(){
                     this.on('uploadprogress', function(file, progress){
                         console.log('progresss', progress);
