@@ -47,6 +47,7 @@ app.use('/uploads',
     // another middleware, this time to
     // transfer the received file to feathers
     function(req,res,next){
+        console.log('/uploads');
         req.feathers.file = req.file;
         next();
     },
@@ -61,6 +62,7 @@ app.service('/uploads').before({
     create: [
         function(hook) {
             if (!hook.data.uri && hook.params.file){
+                console.log('decoding file');
                 const file = hook.params.file;
                 const uri = dauria.getBase64DataURI(file.buffer, file.mimetype);
                 hook.data = {uri: uri};
