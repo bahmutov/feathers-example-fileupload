@@ -73,9 +73,8 @@ app.service('/uploads').before({
 }).after({
     create: [
         function (hook) {
-            console.log('after uploading')
-            console.log(hook.data.id)
-            hook.data.uri = undefined
+            console.log(`after uploading file ${hook.data.id}`)
+            delete hook.result.uri
         }
     ]
 });
