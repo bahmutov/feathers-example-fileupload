@@ -20,7 +20,8 @@ const blobService = require('feathers-blob');
 // storage service like AWS or Google Drive.
 const fs = require('fs-blob-store');
 const join = require('path').join
-const topFolder = join(__dirname, 'uploads')
+const rootFolder = process.env.NOW ? '/tmp' : __dirname
+const topFolder = join(rootFolder, 'uploads')
 const blobStorage = fs(topFolder);
 
 const exists = require('fs').existsSync;
