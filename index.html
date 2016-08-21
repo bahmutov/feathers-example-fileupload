@@ -32,6 +32,7 @@
 
 
             // Let's use DropZone!
+            const params = {}
             Dropzone.options.myAwesomeDropzone = {
                 paramName: "uri",
                 uploadMultiple: false,
@@ -39,6 +40,7 @@
                 parallelUploads: 1,
                 acceptedFiles: 'image/jpeg,image/jpg',
                 addRemoveLinks: true,
+                params: params,
                 init: function(){
                     this.on('uploadprogress', function(file, progress){
                         console.log('progresss', progress);
@@ -49,10 +51,32 @@
     </head>
     <body>
         <h1>Drop images below</h1>
+        Folder id: <input type="text" name="folderId" id="folderId">
+        <button id="setFolderId">Make folder</button>
         <form action="/uploads"
           class="dropzone"
           id="my-awesome-dropzone">
-            Folder id: <input type="text" name="folderId">
-          </form>
+        </form>
+    <script>
+        document.getElementById('setFolderId').addEventListener('click',
+            function () {
+                const folderId = document.getElementById('folderId').value
+
+                fetch('/new-folder', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        folderId: folderId
+                    })
+                }).then(function onSuccess() {
+                    console.log('set folder id', folderId)
+                    params.folderId = folderId
+                })
+            }
+        )
+    </script>
     </body>
 </html>

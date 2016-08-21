@@ -10,15 +10,20 @@ const multer = require('multer');
 const multipartMiddleware = multer();
 const dauria = require('dauria');
 const filesize = require('file-size');
+const mkdir = require('mkdir-p')
 
 // feathers-blob service
 const blobService = require('feathers-blob');
+
 // Here we initialize a FileSystem storage,
 // but you can use feathers-blob with any other
 // storage service like AWS or Google Drive.
 const fs = require('fs-blob-store');
-const blobStorage = fs(__dirname + '/uploads');
+const join = require('path').join
+const topFolder = join(__dirname, 'uploads')
+const blobStorage = fs(topFolder);
 
+const exists = require('fs').existsSync;
 
 // Feathers app
 const app = feathers();
@@ -27,6 +32,21 @@ const app = feathers();
 app.use('/', serveStatic(__dirname))
 // Parse HTTP JSON bodies
 app.use(bodyParser.json());
+
+app.post('/new-folder', function (req, res) {
+    console.log('new folder folderId', req.body.folderId)
+    if (!req.body.folderId) {
+        throw new Error('Missing folder id');
+    }
+    const fullFolder = join(topFolder, req.body.folderId)
+    if (!exists(fullFolder)) {
+        mkdir.sync(fullFolder);
+        console.log('made folder', fullFolder);
+    }
+
+    return res.sendStatus(200)
+})
+
 // Parse URL-encoded params
 app.use(bodyParser.urlencoded({ extended: true }));
 // Register hooks module
@@ -78,14 +98,19 @@ app.service('/uploads').before({
 
                 const uri = dauria.getBase64DataURI(file.buffer, file.mimetype);
                 hook.data = {uri: uri};
-                hook.data.id = file.originalname;
+                console.log('output filename with folder')
+                hook.data.id = join(hook.params.folderId, file.originalname);
+                console.log(hook.data.id)
             }
         }
     ]
 }).after({
     create: [
         function (hook) {
-            console.log(`after uploading file ${hook.data.id}`)
+            // return to client only folder + filename
+            // const id = join(hook.params.folderId, hook.params.file.originalname)
+            console.log(`after uploading file ${hook.result.id}`)
+            // hook.result.id = id
             delete hook.result.uri
         }
     ]
