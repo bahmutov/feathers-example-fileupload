@@ -4,6 +4,12 @@
         <title>Feathersjs File Upload</title>
 
         <link rel="stylesheet" href="assets/dropzone.css">
+        <style>
+        /* always show filename on thumbnail */
+        .dropzone .dz-preview .dz-details {
+          opacity: 1 !important;
+        }
+        </style>
         <script src="assets/dropzone.js"></script>
 
         <script type="text/javascript" src="socket.io/socket.io.js"></script>
@@ -31,6 +37,7 @@
                 uploadMultiple: false,
                 maxFilesize: 10,
                 acceptedFiles: 'image/jpeg,image/jpg',
+                addRemoveLinks: true,
                 init: function(){
                     this.on('uploadprogress', function(file, progress){
                         console.log('progresss', progress);
@@ -40,7 +47,7 @@
         </script>
     </head>
     <body>
-        <h1>Let's upload some files!</h1>
+        <h1>Drop images here to be uploaded</h1>
         <form action="/uploads"
           class="dropzone"
           id="my-awesome-dropzone"></form>

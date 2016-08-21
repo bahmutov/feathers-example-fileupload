@@ -77,3 +77,4 @@ $RECYCLE.BIN/
 
 # uploads
 uploads/
+.DS_Store
