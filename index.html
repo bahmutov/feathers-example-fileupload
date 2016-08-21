@@ -12,16 +12,22 @@
         </style>
         <script src="assets/dropzone.js"></script>
 
-        <script type="text/javascript" src="socket.io/socket.io.js"></script>
+        <!-- <script type="text/javascript" src="socket.io/socket.io.js"></script> -->
+        <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/core-js/2.1.4/core.min.js"></script>
         <script type="text/javascript" src="//npmcdn.com/feathers-client@^1.0.0/dist/feathers.js"></script>
         <script src="//npmcdn.com/tiny-toast@1.1.0/dist/tiny-toast.js"></script>
         <script type="text/javascript">
             // feathers client initialization
-            var socket = io('http://localhost:3030');
+            // var socket = io('http://localhost:3030');
+            const rest = feathers.rest('/')
+            // const app = feathers()
+            // .configure(feathers.hooks())
+            // .configure(feathers.socketio(socket));
             const app = feathers()
-            .configure(feathers.hooks())
-            .configure(feathers.socketio(socket));
+                .configure(feathers.hooks())
+                .configure(rest.jquery($));
             const uploadService = app.service('uploads');
 
             // Now with Real-Time Support!

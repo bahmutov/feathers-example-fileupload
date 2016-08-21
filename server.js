@@ -55,7 +55,7 @@ app.configure(hooks());
 // Add REST API support
 app.configure(rest());
 // Configure Socket.io real-time APIs
-app.configure(socketio());
+// app.configure(socketio());
 
 
 // Upload Service with multipart support
